@@ -1,6 +1,30 @@
+# A Simple task manager app
+
+A Simple task manager app build in react.
+
+Node Version required >= 18
+
+# A quick setup to run this app on local machine
+
+1. Clone the backend rest api repository from here and follow the instruction carefully to run the api successfully [Task Manager api](https://github.com/ashumantoo/task-manager-api.git)
+2. Clone the Task-manager-app
+Clone the repo.
+
+  ```bash
+  https://github.com/ashumantoo/task-manager-app.git
+  cd task-manager-app
+  ```
+3. To install all the dependancy, run the following
+ ```bash
+  npm install
+  ```
+4. After that follow the `Getting Started with Create React App` instruction given below.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+In the project directory, you can run:
 
 ## Available Scripts
 

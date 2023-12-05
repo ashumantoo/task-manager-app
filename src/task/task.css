@@ -1,0 +1,30 @@
+.heading {
+  color: #1976d2;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.task_container {
+  width: 52%;
+  margin: 16px auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task_list_container {
+  width: 50%;
+  margin: 0 auto;
+  padding: 16px;
+  background-color: #e5e6e4;
+  border-radius: 8px;
+}
+
+.icon {
+  cursor: pointer;
+  padding: 4px;
+  border: 1px solid #fff;
+  border-radius: 4px;
+  background-color: #e5e6e4;
+  opacity: 0.6;
+}
