@@ -13,7 +13,7 @@ import React, { FC, useEffect, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { taskApi } from '../utils/axios';
-import { ITask, ITaskInput } from '../utils/task-types';
+import { getTaskColorStyles, getTaskStatusValues, ITask, ITaskInput } from '../utils/task-types';
 import { TaskDialog } from './task-dialog';
 
 export const Task: FC = () => {
@@ -32,10 +32,11 @@ export const Task: FC = () => {
       if (taskId) {
         const response = await taskApi.updateTask(taskId, taskInput);
         if (response && response.data.success) {
-          const matchedTaskIndex = filteredTask.findIndex((task) => task._id === response.data.task._id);
+          const _task = response.data.data;
+          const matchedTaskIndex = filteredTask.findIndex((task) => task._id === _task._id);
           if (matchedTaskIndex >= 0) {
             const _filteredTasks = [...filteredTask];
-            _filteredTasks[matchedTaskIndex] = response.data.task;
+            _filteredTasks[matchedTaskIndex] = _task;
             setFilteredTask(_filteredTasks);
           }
           setOpenDialog(false)
@@ -44,8 +45,8 @@ export const Task: FC = () => {
         const response = await taskApi.createTask(taskInput);
         if (response && response.data.success) {
           setFilteredTask([
-            ...filteredTask,
-            response.data.task
+            response.data.data,
+            ...filteredTask
           ]);
           setOpenDialog(false)
         }
@@ -63,11 +64,12 @@ export const Task: FC = () => {
         status: "DONE"
       });
       if (response && response.data.success) {
-        const matchedTaskIndex = filteredTask.findIndex((task) => task._id === response.data.task._id);
+        const _task = response.data.data;
+        const matchedTaskIndex = filteredTask.findIndex((task) => task._id === _task._id);
         if (matchedTaskIndex >= 0) {
-          const _filteredTasks = [...filteredTask];
-          _filteredTasks[matchedTaskIndex] = response.data.task;
-          setFilteredTask(_filteredTasks);
+          const _updatedFilteredTasks = [...filteredTask];
+          _updatedFilteredTasks[matchedTaskIndex] = response.data.data;
+          setFilteredTask(_updatedFilteredTasks);
         }
       }
     } catch (error) {
@@ -101,8 +103,8 @@ export const Task: FC = () => {
     const fetchTasks = async () => {
       const response = await taskApi.getTasks();
       if (response.data.success) {
-        setTasks(response.data.tasks);
-        setFilteredTask(response.data.tasks);
+        setTasks(response.data.data);
+        setFilteredTask(response.data.data);
       }
     }
     fetchTasks();
@@ -126,18 +128,19 @@ export const Task: FC = () => {
               onChange={handleChange}
             >
               <MenuItem value="ALL">All</MenuItem>
-              <MenuItem value={"TODO"}>To do</MenuItem>
+              <MenuItem value={"TODO"}>Not Started</MenuItem>
               <MenuItem value={"IN_PROGRESS"}>In Progress</MenuItem>
-              <MenuItem value={"DONE"}>Done</MenuItem>
+              <MenuItem value={"DONE"}>Completed</MenuItem>
             </Select>
           </FormControl>
         </div>
       </div>
       <div className='task_list_container' data-testid='taskTable'>
         {filteredTask.length > 0 ? filteredTask.map((task) => {
+          const { backgroundColor, color } = getTaskColorStyles(task.status);
           return (
             <Grid container spacing={2} key={task._id} style={{ backgroundColor: "#fff", width: '99%', margin: '10px auto' }}>
-              <Grid item xs={10} style={{ paddingLeft: 0, paddingTop: 0 }}>
+              <Grid item xs={8} style={{ paddingLeft: 0, paddingTop: 0 }}>
                 <div style={{ display: 'flex' }}>
                   <Checkbox
                     title={task.status === 'DONE' ? 'Task is completed' : ""}
@@ -154,6 +157,16 @@ export const Task: FC = () => {
                 </div>
               </Grid>
               <Grid item xs={2} style={{ paddingLeft: 0, paddingTop: 0 }}>
+                <div style={{ marginTop: 16 }}>
+                  <span style={{
+                    backgroundColor: backgroundColor,
+                    color: color,
+                    padding: 4,
+                    borderRadius: 4
+                  }}>{getTaskStatusValues(task.status)}</span>
+                </div>
+              </Grid>
+              <Grid item xs={2} style={{ paddingLeft: 0, paddingTop: 0 }}>
                 <div style={{ display: "flex", justifyContent: "space-evenly", marginTop: 6 }}>
                   <span
                     className='icon'
@@ -165,10 +178,8 @@ export const Task: FC = () => {
                     className='icon'
                     title={task.status === 'DONE' ? 'Task is completed' : ""}
                     onClick={() => {
-                      if (task.status !== 'DONE') {
-                        setOpenDialog(true);
-                        setSelectedTaskId(task._id)
-                      }
+                      setOpenDialog(true);
+                      setSelectedTaskId(task._id)
                     }}>
                     <EditIcon />
                   </span>

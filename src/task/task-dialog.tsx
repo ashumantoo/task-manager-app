@@ -37,7 +37,7 @@ export const TaskDialog: FC<IDialogProps> = ({ open, taskId, handleClose, handle
       const fetchTask = async (taskId: string) => {
         const response = await taskApi.getTask(taskId);
         if (response && response.data.success) {
-          const { task } = response.data;
+          const { data: task } = response.data;
           setTask({
             ...task,
             title: task.title,
@@ -59,8 +59,8 @@ export const TaskDialog: FC<IDialogProps> = ({ open, taskId, handleClose, handle
         aria-labelledby="responsive-dialog-title"
       >
         <DialogTitle id="responsive-dialog-title" style={{ display: 'flex', justifyContent: "space-between", alignItems: "center" }}>
-          <Typography variant='body1' style={{fontWeight:"bold"}}>
-            Add New Task
+          <Typography variant='body1' style={{ fontWeight: "bold" }}>
+            {taskId ? "Edit Task" : "Create Task"}
           </Typography>
           <span data-testid='closeicon' style={{ cursor: 'pointer' }} onClick={handleClose}><Close /></span>
         </DialogTitle>
